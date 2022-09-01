@@ -7,14 +7,14 @@
   <body> 
    <?php
     
-class Sintatico{
+/*class Sintatico{
 
     public $cont = 0;
     public $anterior = 0;
     public $lista_de_tokens = array(
-      ['token' => 'AP'],
-      ['token' => 'INT'],
-      ['token' => 'FP']
+        ['token' => 'AP'],
+        ['token' => 'INT'],
+        ['token' => 'FP']
     );
 
     function term($token){
@@ -88,4 +88,4 @@ else
 ?>
 
   </body>
-</html>
+</html>*/
