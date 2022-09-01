@@ -31,9 +31,7 @@
             echo "<br>";
 
             $resultado = $sintatico->P();
-            //while($resultado && $sintatico->cont < count($sintatico->lista_de_tokens)){
-            //    $resultado = $sintatico->P();
-           //}
+            
             if($resultado == true){
                 print('<br>Linguagem aceita!');
             }else{
