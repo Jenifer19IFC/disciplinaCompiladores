@@ -4,6 +4,22 @@ require_once('AnalisadorLexicoClasse.php');
 
 class Sintatico{
 
+    /*<P>::= FUNCTION ID AP <LISTA_VARIAVEIS> FP AC <LISTA_BLOCOS> FC;
+    <LISTA_VARIAVEIS> ::= <VARIAVEL> <LISTA_VARIAVEIS2>;
+    <LISTA_VARIAVEIS2>::= PV <LISTA_VARIAVEIS>;
+    <VARIAVEL> ::= TIPO ID;
+    <LISTA_BLOCOS>::= <BLOCO> <LISTA_BLOCOS> |î;
+    <BLOCO>::= <ATR>|<IF>|<WHILE>|<IMPRIME>|<CHAMA_FUNCAO>;
+    <ATR>::= <VAR> ATRIBUICAO <VAR> <OPERACAO> PV;
+    <VAR>::=  const| ID;
+    <OPERACAO>::= MAIS <VAR> | MENOS <VAR> | MULT <VAR> | DIVIDE <VAR> |î;
+    <IF>::= IF AP ID COMPARA <VAR> FP AC <BLOCO> FC;
+    <WHILE>::= WHILE AP ID COMPARA <VAR> FP AC <BLOCO> FC;
+    <IMPRIME>::= PRINT AP <VAR> FP PV;
+    <CHAMA_FUNCAO>::= FUN PT ID AP <PARAM> FP PV;
+    <PARAM>::= CIFRAO ID V <PARAM2> | î;*/
+
+
     public $cont;
     protected $lexico;
     protected $token;   
