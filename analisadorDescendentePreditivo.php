@@ -80,7 +80,7 @@ class Preditivo{
         //echo "<br>TOPO agora: ".$this->stack->top(). "<br>";   
         //var_dump($x);
 
-        for($i = 0; $i<strlen($entrada);$i++){
+        for($i = 0; $i<=strlen($entrada);$i++){
             //echo "<br>TOPO aqui: ".$this->stack->top()."Token ".$x. "<br>";   
             //print("<BR>MINHA PILHA AGORA:<BR>");
            // var_dump($this->stack);
@@ -116,7 +116,7 @@ class Preditivo{
                 }
             }
             }//for
-            if($this->stack->top() == '#'){
+            if($this->stack->top() == '#' && $x == '#'){
                 print('<br><br><b> Sentença aceita!<b><br>');
             }else{
                 print('<br><br><b>Sentença não aceita!<b><br>');
