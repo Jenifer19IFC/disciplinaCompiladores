@@ -6,7 +6,7 @@ class Sintatico{
 
     /*<P>::= FUNCTION ID AP <LISTA_VARIAVEIS> FP AC <LISTA_BLOCOS> FC;
     <LISTA_VARIAVEIS> ::= <VARIAVEL> <LISTA_VARIAVEIS2>;
-    <LISTA_VARIAVEIS2>::= PV <LISTA_VARIAVEIS>;
+    <LISTA_VARIAVEIS2>::= PV <LISTA_VARIAVEIS | î >;
     <VARIAVEL> ::= TIPO ID;
     <LISTA_BLOCOS>::= <BLOCO> <LISTA_BLOCOS> |î;
     <BLOCO>::= <ATR>|<IF>|<WHILE>|<IMPRIME>|<CHAMA_FUNCAO>;
@@ -17,8 +17,7 @@ class Sintatico{
     <WHILE>::= WHILE AP ID COMPARA <VAR> FP AC <BLOCO> FC;
     <IMPRIME>::= PRINT AP <VAR> FP PV;
     <CHAMA_FUNCAO>::= FUN PT ID AP <PARAM> FP PV;
-    <PARAM>::= CIFRAO ID V <PARAM2> | î;*/
-
+    <PARAM>::= CIFRAO ID V <PARAM> | î;*/
 
     public $cont;
     protected $lexico;
@@ -114,7 +113,6 @@ class Sintatico{
                 return true;
             }else{
                 $this->cont = $this->anterior;
-                
                 return $this->LISTA_BLOCOS03();
             }
         }
@@ -278,7 +276,7 @@ class Sintatico{
     }
 
     function PARAM01(){
-        print('<PARAM>::= CIFRAO ID V <PARAM2>');
+        print('<PARAM>::= CIFRAO ID V <PARAM> | î');
         return $this->term('CIFRAO') and $this->term('ID') and $this->term('V') and $this->PARAM();
     }
 
@@ -288,7 +286,7 @@ class Sintatico{
     }
 
     function PARAM(){
-        print('<PARAM>::= CIFRAO ID V <PARAM2> | î');
+        print('<PARAM>::= CIFRAO ID V <PARAM> | î');
         $this->anterior = $this->cont;
         if($this->PARAM01()){
             return true;
