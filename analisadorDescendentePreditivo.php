@@ -78,7 +78,7 @@ class Preditivo{
         $this->stack->push('P'); //empilha simbolo inicial
         $cont = 0;
         //echo "<br>TOPO agora: ".$this->stack->top(). "<br>";   
-        //var_dump($x);
+        //var_dump($x); 
 
         for($i = 0; $i<=strlen($entrada);$i++){
             //echo "<br>TOPO aqui: ".$this->stack->top()."Token ".$x. "<br>";   
@@ -96,6 +96,7 @@ class Preditivo{
                     //$cont += 1;
                 }else{  
                     print("<br><br>Erro sintático!<br>");
+                    echo 'Antes do token: '.$x;
                     break;
                 }
             }else{
