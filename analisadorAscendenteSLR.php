@@ -9,13 +9,15 @@ $entrada = isset($_POST['entrada']) ? $_POST['entrada'] : "";
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <h1><title>Compiladores</title></h1>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+   
 </head>
     <body>
         <form action= "" method="POST">
-            <fieldset>
+                
             <?php
-                print("<h4>ANALISADOR ASCENDENTE SLR</h4>
-                Escreva a sentença abaixo:<br><br>");
+                print("<h4><b>ANALISADOR ASCENDENTE SLR</b></h4>
+                <br>Escreva a sentença abaixo:<br><br>");
             ?>
                 <label for ="entrada"></label>
                 <textarea name="entrada" id="entrada"><?=$entrada?></textarea><br>
@@ -25,6 +27,10 @@ $entrada = isset($_POST['entrada']) ? $_POST['entrada'] : "";
 
 require_once('AnalisadorLexicoClasse.php');
 require_once('Pilha.php');
+require_once('AnalisadorSemantico.php');
+require_once('Escopo.php');
+require_once('ChamaFuncao.php');
+require_once('ArvoreDerivacao.php');
 
 class AnalisadorAscendenteSLR{
 
@@ -33,6 +39,8 @@ class AnalisadorAscendenteSLR{
     public $GOTO = array();
     public $cont = 0;
     protected $lexico;
+    public $elementCompara;
+    public $programa;
 
     function __construct(Lexico $lexico,$entrada){
         $this->lexico = $lexico;
@@ -139,43 +147,150 @@ class AnalisadorAscendenteSLR{
         return $aux;
     }
 
+    function nextTokenObject(){
+        $aux = $this->lexico->lista_tokens[$this->cont];
+        $this->cont++;
+        return $aux;
+    }
+
     function analiseSLR($entrada){
         $p = new Stack();
+        $pilhaEscopos = new Stack();
         $p->push('#');
         $p->push(0);
         $i = 0;
-        $tokenAtual = $this->nextToken();
-       //pega o primeiro token aqui e depois vai dando o next token ali em baixo 
-       //echo "<BR>ATUAL: ".$tokenAtual;
-       //echo "Lista de tokens: ";
-       //var_dump($this->lexico->somente_tokens);
-
-       for($i = 0; $i<=strlen($entrada);$i++){  
-
-      // echo "<br>TESTANDO TOPO  ";
-       //print_r($p->top());
-        //echo "<br>TESTANDO TOKEN ATUAL[0]  " . $tokenAtual;
-
+        //$tokenAtual = $this->nextToken();
+        $tokenAtualbject = $this->nextTokenObject();
+        $tokenAnterior = $tokenAtualbject;
+        $semantico = new Semantica();
+        $escopo = new Escopo();
+        $firstFun = 'fun';
+        $auxNome = "";
+        $auxArray = array();
+        $chamaFun = new ChamaFuncao($auxNome,$auxArray);
+        $auxFun = false;//Quando true, estou no escopo de Fun
+        $auxGeral = false; //Quando true, estou no escopo geral
+        $contA = 0;
+        $contVarDeclaradas = 0;
+        $contVarDeclaradasReconhecidas = 0;
+        $auxDecl = false;
+        $auxCompara = false; // Quando encontro um COMPARA
+        
+        $encontraFClistParametrosFuncao = false;
+        $arvoreDerivacao = new ArvoreDerivacao();
 
         
-        //echo "<br>testando aqui...  " .$this->ACTION[$p->top()][$tokenAtual][1];
+    
+       for($i = 0; $i<=strlen($entrada);$i++){ 
 
-        //echo "<br>BAIXO: ";
-        //var_dump($this->ACTION[$p->top()]);
+        //Encontra todas as variáveis declaradas no parâmetro
+        $myToken =  $this->lexico->lista_tokens[$this->cont-1];
+        if($myToken->lexema == 'string' | $myToken->lexema == 'int' | $myToken->lexema == 'boolean' ){
+            $contVarDeclaradas++;
+            $contVarDec = 0;
+            $contVarDec++;
+            //echo $contVarDec;
+            $myTokenVar =  $this->lexico->lista_tokens[$this->cont];
+            $escopo->listVariaveisDeclaradas[$myTokenVar->lexema] = $myToken->lexema;
+            array_push($escopo->listVariaveisObjectsDecl,$myToken);
+        }
+
+        //Dentro do escopo função ----------------------------------------
+        //Verifica de inicia um escopo de chamada de função 
+        if($myToken->lexema == $firstFun){
+            //echo "<br><br>ACHEI UM CHAMA FUNÇÃO!!<br>";
+            $auxFun = true;
+        }
+
+        //Verifica as variáveis encontradas dentro do escopo de chama função
+        if($auxFun == true){
+            if($myToken->token == "ID"){
+                array_push($chamaFun->listVarChamaFuncao,$myToken->lexema);
+            }
+        }
+        //Valida o fim do escopo do chama função 
+        if($myToken->token == "FC"){
+            $auxFun = false;
+        }
+
+       
+         // -------------------------------------------------------------------
+
+         //Verifica variáveis no escopo geral
+        if($myToken->token == "AC"){
+            $auxGeral = true;
+        }
+
+        if($auxGeral == true && $auxFun == false){
+            if($myToken->token == "ID" && $myToken->lexema != "true" && $myToken->lexema != "false"){
+                array_push($escopo->listVariaveisUsadas,$myToken->lexema);
+            }
+        }
+        if($myToken->token == "FC"){
+            $auxGeral = false;
+        }
+        //----------------------------------------------------------------------
+
+        //Verifica valores recebidos na atribuicao
+        if($myToken->token == "ID"){
+            $myTokenVar = $this->lexico->lista_tokens[$this->cont];
+            if($myTokenVar->lexema == "=" ){
+                //echo "<br>ECONTREI PARA MINHA ATRIBUICAO!! " . $myToken->lexema. " <br> ";
+                //echo "<br> MEU ANTERIOR: ". $myTokenVar->lexema. "<BR>";
+                $auxDecl = true;
+
+            }
+        }
+
+        if($auxDecl == true ){
+            //echo "<br>MEUS TOKENS: ". $myToken->lexema. "<br>";
+            array_push($escopo->listVarValoresRecebidos,$myToken);
+        }
+
+        if($myToken->token == "PV" ){
+            $auxDecl = false;
+        }
+
+        //--------------------------------------------------------------------------------------
+
+        if($myToken->token == "COMPARA"){
+            $auxCompara = true;
+        }
+        if($auxCompara == true){
+            if($myToken->token == "ID" | $myToken->token == "CONST" | $myToken->lexema == "true" | $myToken->lexema == "false"){
+                $this->elementCompara = $myToken;
+            }
+        }
+
+        if($myToken->token == "FP"){
+            $auxCompara = false;
+        }
+            
+       
+        //var_dump($tokenAtualbject);
             try{
-                if(array_key_exists($p->top(),$this->ACTION) && array_key_exists($tokenAtual,$this->ACTION[$p->top()]) &&$this->ACTION[$p->top()][$tokenAtual][0] == 'S'){
-                        $guardaParaEmpilhar = $this->ACTION[$p->top()][$tokenAtual];//AQUI??
+                if(array_key_exists($p->top(),$this->ACTION) && array_key_exists($tokenAtualbject->token,$this->ACTION[$p->top()]) &&$this->ACTION[$p->top()][$tokenAtualbject->token][0] == 'S'){
+                        $guardaParaEmpilhar = $this->ACTION[$p->top()][$tokenAtualbject->token];//AQUI??
                         //echo '<br>GUARDANDO: '.$guardaParaEmpilhar;
                         $stringResult = (int)substr($guardaParaEmpilhar,1);
 
                         $p->push($stringResult);//ver pra não pegar a letra primeria posicao    S[23]
                         //echo "<br><b>Empilhei:</b> ".$stringResult;
 
-                        $tokenAtual = $this->nextToken();
-                        //echo  "<br> Próximo token: ".$this->nextToken();
+                        $tokenAnterior =  $tokenAtualbject;
+                        //$tokenAtual = $this->nextToken();
+                        $tokenAtualbject = $this->nextTokenObject();
+
+                        //echo "MEU TOKEN:<BR>";
+                        //var_dump($tokenAtualbject);
+            
+                        //var_dump($tokenAtualbject);
+                        $this->programa = $arvoreDerivacao->arvoreDerivacao($tokenAtualbject,$escopo->listVariaveisDeclaradas,$escopo->listVariaveisUsadas,$tokenAnterior);
+                        //echo  "<br> TOKEN ATUAL: ";
+                        //var_dump($this->nextTokenObject()->token);
                 }
-                else if(array_key_exists($p->top(),$this->ACTION) && array_key_exists($tokenAtual,$this->ACTION[$p->top()]) &&$this->ACTION[$p->top()][$tokenAtual][0] == 'R'){
-                    $guardaEmbaixo = ($this->ACTION[$p->top()][$tokenAtual][1]);
+                else if(array_key_exists($p->top(),$this->ACTION) && array_key_exists($tokenAtualbject->token,$this->ACTION[$p->top()]) &&$this->ACTION[$p->top()][$tokenAtualbject->token][0] == 'R'){
+                    $guardaEmbaixo = ($this->ACTION[$p->top()][$tokenAtualbject->token][1]);
                     $stringResultEmbaixo = (int)$guardaEmbaixo;
                     //echo '<br>DESEMPILHAR: '.$stringResultEmbaixo;
                     for ($j=0; $j < $stringResultEmbaixo ; $j++){//menos 1 ate o final -- parse int
@@ -183,14 +298,24 @@ class AnalisadorAscendenteSLR{
                         //echo "<BR><br><b>Desempeilhei 1</b> ";
                         //var_dump($p); 
                     }
-                    //echo "<br><br>Minha pilha:";
-                    //var_dump($p);
-                    if(array_key_exists($tokenAtual,$this->GOTO[$p->top()])){//como faz o array key existents
-                        $p->push($this->GOTO[$p->top()][$tokenAtual]);
+
+                    //DESVIO
+                    if(array_key_exists($tokenAtualbject->token,$this->GOTO[$p->top()])){//como faz o array key existents
+                        $p->push($this->GOTO[$p->top()][$tokenAtualbject->token]);
                     }
-                    //echo "<br><br>Agora meu topo: ".$tokenAtual;
-                }else if(array_key_exists($tokenAtual,$this->ACTION[$p->top()]) && $this->ACTION[$p->top()][$tokenAtual] == 'ACCEPT'){//ACC?
+
+                    //echo  "<br><br>ACHEI UMA VARIÁVEL OU NÚMERO: ";
+                    //echo "MEUS IDS E CONSTS:<BR>";
+                    //var_dump($tokenAnterior);//Aquin eu pego todas as variáveis no escopo
+                    //$escopo->guardaVariaveisNaListaVar($tokenAnterior);
+                    //$escopo->criaNovoEscopo($tokenAtualbject);
+                    //echo "<br>Aquii";
+                    
+                
+                    
+                }else if(array_key_exists($tokenAtualbject->token,$this->ACTION[$p->top()]) && $this->ACTION[$p->top()][$tokenAtualbject->token] == 'ACCEPT' && $semantico->verificaVarMesmoNome($escopo->listVariaveisDeclaradas,$contVarDeclaradas,$contVarDeclaradasReconhecidas) == false && $semantico->verificaValoresAtribuicao($escopo->listVariaveisDeclaradas,$escopo->listVariaveisUsadas,$escopo->listVarValoresRecebidos,$this->elementCompara, $myToken) == true && $semantico->verificaDeclaracoesOuNao($escopo->listVariaveisDeclaradas,$escopo->listVariaveisUsadas,$chamaFun->listVarChamaFuncao) == true){//ACC?
                     print('<br><br><b>Linguagem aceita!</b>');
+                    //var_dump($this->lexico->lista_tokens);
                     break;
                 }else{
                     print("<br><br><b>Erro!</b>");
@@ -202,8 +327,19 @@ class AnalisadorAscendenteSLR{
             }
 
 
-        }//while
+        }//for
+        
+       
+        //----------------------------------------------------------------------------
+        //echo "<br><br> VISAO GERAL<br>";
+        
+        //$semantico->verificaDeclaracoesOuNao($escopo->listVariaveisDeclaradas,$escopo->listVariaveisUsadas,$chamaFun->listVarChamaFuncao);
 
+        //$semantico->verificaValoresAtribuicao($escopo->listVariaveisDeclaradas,$escopo->listVariaveisUsadas,$escopo->listVarValoresRecebidos,$this->elementCompara);
+      
+        //----------------------------------------------------------------------------
+       
+       
     }//funcao
 
 }//CLASS
@@ -211,6 +347,9 @@ class AnalisadorAscendenteSLR{
 $lexico = new Lexico($entrada.'#');
 if(isset($_POST['entrada']))    
     $SLR  = new AnalisadorAscendenteSLR($lexico,$entrada);
+
+    echo "<br><br>";
+    print_r($SLR->programa);
 
 ?>
 
