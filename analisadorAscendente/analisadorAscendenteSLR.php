@@ -10,9 +10,23 @@ $entrada = isset($_POST['entrada']) ? $_POST['entrada'] : "";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <h1><title>Compiladores</title></h1>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-   
+    <style>
+        .container { 
+        width: 500px; 
+        margin-left: auto;
+        margin-right: auto; 
+    }
+    .vertical {
+            border-left: 6px solid black;
+            height: 600px;
+            position:absolute;
+            left: 50%;
+        }
+  </style>
 </head>
     <body>
+        <div class="container">
+
         <form action= "" method="POST">
                 
             <?php
@@ -25,12 +39,13 @@ $entrada = isset($_POST['entrada']) ? $_POST['entrada'] : "";
 
 <?php
 
-require_once('AnalisadorLexicoClasse.php');
-require_once('Pilha.php');
-require_once('AnalisadorSemantico.php');
-require_once('Escopo.php');
-require_once('ChamaFuncao.php');
-require_once('ArvoreDerivacao.php');
+require_once('../analisadorLexico./AnalisadorLexicoClasse.php');
+require_once('../analisadorDescendente./Pilha.php');
+require_once('../analisadorSemantico/AnalisadorSemantico.php');
+require_once('../objetos./Escopo.php');
+require_once('../objetos./ChamaFuncao.php');
+require_once('../analisadorSemantico./ArvoreDerivacao.php');
+require_once('../geracaoDeCodigo./GeradorDeCodigo.php');
 
 class AnalisadorAscendenteSLR{
 
@@ -41,6 +56,7 @@ class AnalisadorAscendenteSLR{
     protected $lexico;
     public $elementCompara;
     public $programa;
+    public $codigoEmAssembly = "";
 
     function __construct(Lexico $lexico,$entrada){
         $this->lexico = $lexico;
@@ -266,8 +282,6 @@ class AnalisadorAscendenteSLR{
             $auxCompara = false;
         }
             
-       
-        //var_dump($tokenAtualbject);
             try{
                 if(array_key_exists($p->top(),$this->ACTION) && array_key_exists($tokenAtualbject->token,$this->ACTION[$p->top()]) &&$this->ACTION[$p->top()][$tokenAtualbject->token][0] == 'S'){
                         $guardaParaEmpilhar = $this->ACTION[$p->top()][$tokenAtualbject->token];//AQUI??
@@ -303,19 +317,14 @@ class AnalisadorAscendenteSLR{
                     if(array_key_exists($tokenAtualbject->token,$this->GOTO[$p->top()])){//como faz o array key existents
                         $p->push($this->GOTO[$p->top()][$tokenAtualbject->token]);
                     }
-
-                    //echo  "<br><br>ACHEI UMA VARIÁVEL OU NÚMERO: ";
-                    //echo "MEUS IDS E CONSTS:<BR>";
-                    //var_dump($tokenAnterior);//Aquin eu pego todas as variáveis no escopo
-                    //$escopo->guardaVariaveisNaListaVar($tokenAnterior);
-                    //$escopo->criaNovoEscopo($tokenAtualbject);
-                    //echo "<br>Aquii";
-                    
-                
                     
                 }else if(array_key_exists($tokenAtualbject->token,$this->ACTION[$p->top()]) && $this->ACTION[$p->top()][$tokenAtualbject->token] == 'ACCEPT' && $semantico->verificaVarMesmoNome($escopo->listVariaveisDeclaradas,$contVarDeclaradas,$contVarDeclaradasReconhecidas) == false && $semantico->verificaValoresAtribuicao($escopo->listVariaveisDeclaradas,$escopo->listVariaveisUsadas,$escopo->listVarValoresRecebidos,$this->elementCompara, $myToken) == true && $semantico->verificaDeclaracoesOuNao($escopo->listVariaveisDeclaradas,$escopo->listVariaveisUsadas,$chamaFun->listVarChamaFuncao) == true){//ACC?
                     print('<br><br><b>Linguagem aceita!</b>');
-                    //var_dump($this->lexico->lista_tokens);
+                    $geradorCodigo = new GeradorCodigo();
+                    echo "<br><br>";
+                    echo "<h3>CÓDIGO EM ASSEMBLY:</h3>";
+                    $this->codigoEmAssembly = $geradorCodigo->geraCodigoAssembly($this->programa);
+                    echo $this->codigoEmAssembly;
                     break;
                 }else{
                     print("<br><br><b>Erro!</b>");
@@ -323,21 +332,15 @@ class AnalisadorAscendenteSLR{
                }
             }catch(Exception $e){
                 print('<br><br><b>Linguagem aceita!</b>');
+                $geradorCodigo = new GeradorCodigo();
+                echo "<h3>CÓDIGO EM ASSEMBLY:</h3>";
+                $this->codigoEmAssembly = $geradorCodigo->geraCodigoAssembly($this->programa);
+                echo $this->codigoEmAssembly;
                 break;
             }
 
 
         }//for
-        
-       
-        //----------------------------------------------------------------------------
-        //echo "<br><br> VISAO GERAL<br>";
-        
-        //$semantico->verificaDeclaracoesOuNao($escopo->listVariaveisDeclaradas,$escopo->listVariaveisUsadas,$chamaFun->listVarChamaFuncao);
-
-        //$semantico->verificaValoresAtribuicao($escopo->listVariaveisDeclaradas,$escopo->listVariaveisUsadas,$escopo->listVarValoresRecebidos,$this->elementCompara);
-      
-        //----------------------------------------------------------------------------
        
        
     }//funcao
@@ -348,10 +351,13 @@ $lexico = new Lexico($entrada.'#');
 if(isset($_POST['entrada']))    
     $SLR  = new AnalisadorAscendenteSLR($lexico,$entrada);
 
-    echo "<br><br>";
-    print_r($SLR->programa);
+    echo "<br><br><br>";
+    if(!empty($SLR->programa)){
+       // print_r($SLR->programa);
+    }
 
 ?>
+ </div>
 
 </body>
         </fieldset>

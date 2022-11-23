@@ -9,7 +9,7 @@ class Stack
         // initialize the stack
         $this->stack = array();
         // stack can only contain this many items
-        $this->limit = $limit;
+        $this->limit = $limit;  
     }
 
     public function push($item) {

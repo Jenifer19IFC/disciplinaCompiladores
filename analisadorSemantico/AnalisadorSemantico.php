@@ -1,18 +1,19 @@
 <?php
-require_once('Escopo.php');
-require_once('ChamaFuncao.php   ');
-require_once('Id.php');
-require_once('Const.php');
-require_once('Var.php');
-require_once('If.php');
-require_once('While.php');
-require_once('Atr.php');
-require_once('ChamaFuncao.php');
-require_once('Imprime.php');
-require_once('Expressao.php');
-require_once('Operacao.php');
-require_once('Bloco.php');
-require_once('Programa.php');
+require_once('../objetos./Escopo.php');
+require_once('../objetos./ChamaFuncao.php');
+require_once('../objetos./Id.php');
+require_once('../objetos./Const.php');
+require_once('../objetos./Var.php');
+require_once('../objetos./If.php');
+//require_once('./pasta/If.php');
+require_once('../objetos./While.php');
+require_once('../objetos./Atr.php');
+require_once('../objetos./ChamaFuncao.php');
+require_once('../objetos./Imprime.php');
+require_once('../objetos./Expressao.php');
+require_once('../objetos./Operacao.php');
+require_once('../objetos./Bloco.php');
+require_once('../objetos./Programa.php');
 
 class Semantica{
     //PRIMEIRO REALIZAR A VALIDAÇÃO E DEPOIS A ÁRVORE DE DERIVAÇÃO
@@ -43,7 +44,7 @@ class Semantica{
                 if(in_array($key,$listVariaveisUsadas ) | in_array($key,$listVarChamaFuncao)){
                     //echo "<br> Variável '<b>".$key . "</b>' declarada e é uutilizada.<br>";
                 }else{
-                    echo "<br>Variável '<b>".$key . "</b>' foi declarada, mas não é utilizada   .<br>";
+                    echo "<br><br>Variável '<b>".$key . "</b>' foi declarada, mas não é utilizada   .<br>";
                 }
                     
             }
@@ -114,11 +115,6 @@ class Semantica{
         $encontreiVarInt = false;
         $aB = false;
 
-
-    //var_dump($listVarValoresRecebidos);
-   // echo "<br>";
-    //var_dump($listVariaveisUsadas);
-    //var_dump($elementCompara);
         foreach($listVariaveisDeclaradas as $key=>$value){
             if(in_array($key,$listVariaveisUsadas)){
                 //echo "<br>Chave " .  $key. " do tipo " . $value ."<br>";
@@ -154,7 +150,7 @@ class Semantica{
                         if($auxSs == $SauxCompS && $SauxCompI == 0 &&  $auxSi == 0){
                             //echo "TUDO STRING!!";
                         }else if($IauxCompS == 1 && $IauxSi == 1){
-                            echo "<br>Variável deve receber valor de tipo String";
+                            echo "<br><br>Variável deve receber valor de tipo String";
                             return false;
                         }
                         
@@ -169,9 +165,8 @@ class Semantica{
                             return false;
                         }
                         else{
-                           
                             //echo "<br><br>Comparação deve receber variável do tipo String!<br>";
-                            echo "<br>Variável deve receber valor do tipo String!<br>";
+                            echo "<br><br>Variável deve receber valor do tipo String!<br>";
                             return false;
                             exit;
                         }
@@ -210,7 +205,7 @@ class Semantica{
                         }
                         else{
                             //echo "<br><br>Comparação deve receber variável do tipo Int<br>";
-                            echo "<br>Variável deve receber valor do tipo Int<br>";
+                            echo "<br><br>Variável deve receber valor do tipo Int<br>";
                             return false;
                             exit;
                         }
@@ -264,7 +259,7 @@ class Semantica{
                             //echo "TUDO STRING!!";
                         }
                         else{
-                            echo "<br>Erro, variável recebeu valor de tipo incorreto!<br>";
+                            echo "<br><br>Erro, variável recebeu valor de tipo incorreto!<br>";
                             return false;
                             exit;
                         }
@@ -308,7 +303,7 @@ class Semantica{
                         return false;
                     }
                     else{
-                        echo "<br>Erro, variável recebeu valor de tipo incorreto!<br>";
+                        echo "<br><br>Erro, variável recebeu valor de tipo incorreto!<br>";
                         return false;
                         exit;
                     }

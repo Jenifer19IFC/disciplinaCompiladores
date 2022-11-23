@@ -1,7 +1,7 @@
 <?php
-require_once('Variavel.php');
-require_once('ChamaFuncao.php');
-require_once('Param.php');
+require_once('../objetos./Variavel.php');
+require_once('../objetos./ChamaFuncao.php');
+require_once('../objetos./Param.php');
 
 class ArvoreDerivacao{
 
@@ -129,6 +129,7 @@ class ArvoreDerivacao{
             
         }
         if($this->fimExpressao == true){
+           
             // ------------------------- print no If ------------------------------------
             if($tokenAtualbject->lexema == "print"){
                 $this->iniciaPrint = true;
@@ -140,10 +141,16 @@ class ArvoreDerivacao{
                 $this->imprime->setVarr($varr);
                 if($this->guardaIfOrWhile == "IF"){
                     $this->if->setBloco($this->imprime);
-                    array_push($this->programa->listaBlocos,$this->if);
+                    if($this->if != null){
+                        array_push($this->programa->listaBlocos,$this->if);
+                    }
+                   
                 }else if($this->guardaIfOrWhile == "WHILE"){
                     $this->while->setBloco($this->imprime);
-                    array_push($this->programa->listaBlocos,$this->while);
+                    if($this->while != null){
+                        array_push($this->programa->listaBlocos,$this->while);
+                    }
+                    
                 }
                 
             } 
@@ -153,10 +160,16 @@ class ArvoreDerivacao{
                 $this->imprime->setVarr($varr);
                 if($this->guardaIfOrWhile == "IF"){
                     $this->if->setBloco($this->imprime);
-                    array_push($this->programa->listaBlocos,$this->if);
+                    if($this->if != null){
+                        array_push($this->programa->listaBlocos,$this->if);
+                    }
+                    
                 }else if($this->guardaIfOrWhile == "WHILE"){
                     $this->while->setBloco($this->imprime);
-                    array_push($this->programa->listaBlocos,$this->while);
+                    if($this->while != null){
+                        array_push($this->programa->listaBlocos,$this->while);
+                    }
+                   
                 }
             }
             if($tokenAtualbject->token == "FC" && $this->iniciaPrint == true ){
@@ -187,10 +200,16 @@ class ArvoreDerivacao{
                 $this->fimFun = true;
                 if($this->guardaIfOrWhile == "IF"){
                     $this->if->setBloco($this->chamaFuncao);
-                    array_push($this->programa->listaBlocos,$this->if);
+                    if($this->if != null){
+                        array_push($this->programa->listaBlocos,$this->if);
+                    }
+                    
                 }else if($this->guardaIfOrWhile == "WHILE"){
                     $this->while->setBloco($this->chamaFuncao);
-                    array_push($this->programa->listaBlocos,$this->while);
+                    if($this->while != null){
+                        array_push($this->programa->listaBlocos,$this->while);
+                    }
+                    
                 }
                 
             }
@@ -216,10 +235,16 @@ class ArvoreDerivacao{
                 $this->fimAtr = true;
                 if($this->guardaIfOrWhile == "IF"){
                     $this->if->setBloco($this->atr);
-                    array_push($this->programa->listaBlocos,$this->if);
+                    if($this->if != null){
+                        array_push($this->programa->listaBlocos,$this->if);
+                    }
+                    
                 }else if($this->guardaIfOrWhile == "WHILE"){
                     $this->while->setBloco($this->atr);
-                    array_push($this->programa->listaBlocos,$this->while);
+                    if($this->while != null){
+                        array_push($this->programa->listaBlocos,$this->while);
+                    }
+                    
                 }
                 
             }
@@ -238,13 +263,19 @@ class ArvoreDerivacao{
             $varr = new Id($tokenAtualbject->lexema);
             $this->imprime = new Imprime();
             $this->imprime->setVarr($varr);
-           array_push($this->programa->listaBlocos,$this->imprime);
+            if($this->imprime != null){
+                array_push($this->programa->listaBlocos,$this->imprime);
+            }
+          
         } 
         if($tokenAtualbject->token == "CONST" && $this->iniciaPrint == true && $this->fimPrint == false && $this->iniciaIf == false){
             $varr = new Constt($tokenAtualbject->lexema);
             $this->imprime = new Imprime();
             $this->imprime->setVarr($varr);
-            array_push($this->programa->listaBlocos,$this->imprime);
+            if($this->imprime != null){
+                array_push($this->programa->listaBlocos,$this->imprime);
+            }
+           
         }
         if($tokenAtualbject->token == "FC" && $this->iniciaPrint == true && $this->iniciaIf == false){
             $this->fimPrint = true;
@@ -273,7 +304,10 @@ class ArvoreDerivacao{
 
         if($tokenAtualbject->token == "FC" && $this->fimFun == false && $this->iniciaIf == false){
             $this->fimFun = true;
-            array_push($this->programa->listaBlocos,$this->chamaFuncao);
+            if($this->chamaFuncao != null){
+                array_push($this->programa->listaBlocos,$this->chamaFuncao);
+            }
+            
         }
 
         //--------------------------- ATRIBUICAO SOZINHO ---------------------------------
@@ -313,7 +347,10 @@ class ArvoreDerivacao{
 
         if($tokenAtualbject->token == "FC" && $this->fimAtr == false && $this->iniciaIf == false){
             $this->fimAtr = true;
-            array_push($this->programa->listaBlocos,$this->atr);
+            if($this->atr != null){
+                array_push($this->programa->listaBlocos,$this->atr);
+            }
+           
         }
 
 
