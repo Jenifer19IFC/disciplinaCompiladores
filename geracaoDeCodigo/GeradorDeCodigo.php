@@ -78,6 +78,7 @@ class GeradorCodigo{
 
     function seInstanceIff(Programa $programa){
         $tipoExpessaoIf = "";
+        //Verifica tipo da Expressão
         for ($i=0; $i < count($programa->listaVariaveis); $i++) { 
             if($programa->listaBlocos[0]->expressao->operadorDireita instanceof Id){
                 if($programa->listaBlocos[0]->expressao->operadorDireita->id == $programa->listaVariaveis[$i]->nome){
@@ -195,17 +196,22 @@ class GeradorCodigo{
         }//instanceof imprime
         //Quando variável é do tipo int
         if(!empty($programa->listaBlocos[0]->bloco->varr)){
+            //print a [tipo int]
             if($programa->listaBlocos[0]->bloco->varr instanceof Id  && $tipoImprime == "int" && $isAtr){
                 $label = "<i>\n\nlabel:\n
                 li \$v0, 1
                 lw \$a0, ".$programa->listaBlocos[0]->bloco->varr->id."
                 syscall</i>";
-            }else if($programa->listaBlocos[0]->bloco->varr instanceof Id  && $tipoImprime == "string"){
+            }
+          //print a [tipo string]  
+            else if($programa->listaBlocos[0]->bloco->varr instanceof Id  && $tipoImprime == "string"){
                 $label = "<i>\n\nlabel:\n
                 li \$v0, 4
                 la \$a0, ".$programa->listaBlocos[0]->bloco->varr->id."
                 syscall</i>";
-            }else if($programa->listaBlocos[0]->bloco->varr instanceof Constt){
+            }
+            //print(32)
+            else if($programa->listaBlocos[0]->bloco->varr instanceof Constt){
                 $label = "<i>\n\nlabel:\n
                 li \$v0, 1
                 lw \$a0, ".$programa->listaBlocos[0]->bloco->varr->const."
@@ -224,6 +230,7 @@ class GeradorCodigo{
         $tipoExpressao = "";
         if($programa->listaBlocos[0]->bloco instanceof Atr){
             $encontreiAtr = true;
+            //Verifica o tipo da atribuição
             for ($i=0; $i < count($programa->listaVariaveis); $i++) { 
                 if($programa->listaBlocos[0]->bloco->variavelQueRecebe instanceof Id){
                     if($programa->listaBlocos[0]->bloco->variavelQueRecebe->id == $programa->listaVariaveis[$i]->nome){
@@ -231,6 +238,7 @@ class GeradorCodigo{
                     }
                 }
             }
+            //Verifica p tipo da expressão
             for ($i=0; $i < count($programa->listaVariaveis); $i++) { 
                 if($programa->listaBlocos[0]->expressao->operadorEsquerda instanceof Id){
                     if($programa->listaBlocos[0]->expressao->operadorEsquerda->id == $programa->listaVariaveis[$i]->nome){
@@ -243,8 +251,8 @@ class GeradorCodigo{
         //echo "<br> <b>Atr</b> do tipo ". $tipoAtr."<br>";
 
         if($encontreiAtr){
-           //if(a==53){b=b}
             if($tipoExpressao == "int" && $tipoAtr == "string"){
+                //if(a==53){b=b} : primeiro int e segundo string
                 if($programa->listaBlocos[0]->expressao->operadorEsquerda instanceof Id && $programa->listaBlocos[0]->expressao->operadorDireita instanceof Constt){
                     $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.": .word 10
                     ".$programa->listaBlocos[0]->bloco->variavelEsq->id.": .asciiz \"linha de código\"\n
@@ -372,7 +380,6 @@ class GeradorCodigo{
                     lw \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->id."</i>";
                     return $assembly.$label; 
                 }
-                //AQUII
                 else if($programa->listaBlocos[0]->expressao->operadorEsquerda->id == $programa->listaBlocos[0]->expressao->operadorDireita->id && $programa->listaBlocos[0]->bloco->variavelEsq instanceof Id && $programa->listaBlocos[0]->bloco->variavelEsq->id !=  $programa->listaBlocos[0]->bloco->variavelQueRecebe->id){
                     $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.": .word 10
                     ".$programa->listaBlocos[0]->bloco->variavelEsq->id.": .word 1\n
@@ -384,7 +391,6 @@ class GeradorCodigo{
                     return $assembly.$label; 
                 }            
             }//if INT
-    
     
         }//if encontreiAtr
             
