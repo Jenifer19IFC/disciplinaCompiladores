@@ -1,5 +1,9 @@
 <?php
 $entrada = isset($_POST['entrada']) ? $_POST['entrada'] : "";
+//Definir tamanho do text area
+//Tamanho da fonte
+
+
 ?>
 
 <!DOCTYPE html>
@@ -8,7 +12,7 @@ $entrada = isset($_POST['entrada']) ? $_POST['entrada'] : "";
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <h1><title>Compiladores</title></h1>
+    <h1><title>Compilador</title></h1>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <style>
         .container { 
@@ -28,14 +32,12 @@ $entrada = isset($_POST['entrada']) ? $_POST['entrada'] : "";
         <div class="container">
 
         <form action= "" method="POST">
-                
-            <?php
-                print("<h4><b>ANALISADOR ASCENDENTE SLR</b></h4>
-                <br>Escreva a sentença abaixo:<br><br>");
-            ?>
+            <div class="form-group text-center">
+                <label for="sentenca" class="form-label"><h3><b>Analisador Ascendente SLR</b></h3></label><br><br>
                 <label for ="entrada"></label>
-                <textarea name="entrada" id="entrada"><?=$entrada?></textarea><br>
-                    <input type="submit" value="Enviar">  
+                <textarea name="entrada" id="entrada"><?=$entrada?></textarea><br><br>
+                <button class="btn btn-primary" type="submit">Gerar código Assembly</button><br><br>
+            </div>  
 
 <?php
 
@@ -325,9 +327,11 @@ class AnalisadorAscendenteSLR{
                     echo "<h3>CÓDIGO EM ASSEMBLY:</h3>";
                     $this->codigoEmAssembly = $geradorCodigo->geraCodigoAssembly($this->programa);
                     echo $this->codigoEmAssembly;
+                    return true;
                     break;
                 }else{
                     print("<br><br><b>Erro!</b>");
+                    return false;
                     break;
                }
             }catch(Exception $e){
@@ -336,6 +340,7 @@ class AnalisadorAscendenteSLR{
                 echo "<h3>CÓDIGO EM ASSEMBLY:</h3>";
                 $this->codigoEmAssembly = $geradorCodigo->geraCodigoAssembly($this->programa);
                 echo $this->codigoEmAssembly;
+                return true;
                 break;
             }
 

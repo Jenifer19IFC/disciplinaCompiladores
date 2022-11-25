@@ -94,7 +94,8 @@ class GeradorCodigo{
                 $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.":  .asciiz \"token\" \n
                 .text\n\n la \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
                 la \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->id."
-                beq \$t1,\$t2, label </i>";
+                beq \$t1,\$t2, label\n
+                label:</i>";
             }
             //Quando a==b
             else if($programa->listaBlocos[0]->expressao->operadorDireita->id != $programa->listaBlocos[0]->expressao->operadorEsquerda->id){
@@ -102,7 +103,8 @@ class GeradorCodigo{
                 .text\n
                 la \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
                 la \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->id."
-                beq \$t1,\$t2, label </i>";
+                beq \$t1,\$t2, label\n
+                label: </i>";
             }
         }
 
@@ -112,7 +114,8 @@ class GeradorCodigo{
             $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.": .word 10\n
             .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
             lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
-            beq \$t1,\$t2, label </i>";
+            beq \$t1,\$t2, label\n
+            label:</i>";
         }
        
         //Quando a==b, por exemplo
@@ -123,13 +126,15 @@ class GeradorCodigo{
                 $programa->listaBlocos[0]->expressao->operadorDireita->id.": .word 34\n
                 .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
                 lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->id."
-                beq \$t1,\$t2, label </i>";
+                beq \$t1,\$t2, label\n
+                label:</i>";
             }else{
                 //Quando ids são iguais
                 $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.": .word 10\n
                 .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
                 lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->id."
-                beq \$t1,\$t2, label \n\n </i>";
+                beq \$t1,\$t2, label \n
+                label: </i>";
             }     
         }//else if
         
@@ -309,7 +314,7 @@ class GeradorCodigo{
                         .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
                         lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
                         beq \$t1,\$t2, label </i>
-                       \n\nlabel:\n
+                       label:\n
                         lw \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->id."</i>";
                         return $assembly.$label; 
                     }  
@@ -320,7 +325,7 @@ class GeradorCodigo{
                         ".$programa->listaBlocos[0]->bloco->variavelQueRecebe->id.": .word 0\n
                         .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
                         lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->id."
-                        beq \$t1,\$t2, label \n
+                        beq \$t1,\$t2, label 
                         label:\n
                         lw \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->const."</i>";
                         return $assembly.$label; 
