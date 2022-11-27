@@ -39,12 +39,15 @@ $entrada = isset($_POST['entrada']) ? $_POST['entrada'] : "";
     } 
     .code{
         width: 50;
-        color: #fff; 
+        color: #000000; 
         border-radius: 5%;
         font-family: 'Courier New';
         font-size: 20px;
-        background-color: #000000;
-        opacity: 85%;
+       
+        opacity: 80%;
+        margin-right: 10%;
+        margin-left: 35%;
+        
     }
     .textAreaSentence{
         color: #000000;
@@ -87,9 +90,9 @@ $entrada = isset($_POST['entrada']) ? $_POST['entrada'] : "";
                                  <?php $geradorCodigo = new GeradorCodigo();
                                     $codigoEmAssembly = $geradorCodigo->geraCodigoAssembly($SLR->programa); ?>
                                     <div><h5><b> 
-                                        <div class="code btn btn-dark" >
-                                            <div class="form-group text-center">
-                                                    <p class="text-justify">
+                                        <div class="code" >
+                                            <div class="form-group">
+                                                    <p class="text-left">
                                                         <?php echo $codigoEmAssembly; ?>
                                                     </b></h5>
                                                     </p>    
