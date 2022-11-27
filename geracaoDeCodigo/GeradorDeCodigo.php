@@ -203,21 +203,21 @@ class GeradorCodigo{
         if(!empty($programa->listaBlocos[0]->bloco->varr)){
             //print a [tipo int]
             if($programa->listaBlocos[0]->bloco->varr instanceof Id  && $tipoImprime == "int" && $isAtr){
-                $label = "<i>\n\nlabel:\n
+                $label = "<i>\n
                 li \$v0, 1
                 lw \$a0, ".$programa->listaBlocos[0]->bloco->varr->id."
                 syscall</i>";
             }
           //print a [tipo string]  
             else if($programa->listaBlocos[0]->bloco->varr instanceof Id  && $tipoImprime == "string"){
-                $label = "<i>\n\nlabel:\n
+                $label = "<i>\n
                 li \$v0, 4
                 la \$a0, ".$programa->listaBlocos[0]->bloco->varr->id."
                 syscall</i>";
             }
             //print(32)
             else if($programa->listaBlocos[0]->bloco->varr instanceof Constt){
-                $label = "<i>\n\nlabel:\n
+                $label = "<i>\n
                 li \$v0, 1
                 lw \$a0, ".$programa->listaBlocos[0]->bloco->varr->const."
                 syscall</i>";

@@ -1,46 +1,5 @@
-<?php
-$entrada = isset($_POST['entrada']) ? $_POST['entrada'] : "";
-//Definir tamanho do text area
-//Tamanho da fonte
-
-
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <h1><title>Compilador</title></h1>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <style>
-        .container { 
-        width: 500px; 
-        margin-left: auto;
-        margin-right: auto; 
-    }
-    .vertical {
-            border-left: 6px solid black;
-            height: 600px;
-            position:absolute;
-            left: 50%;
-        }
-  </style>
-</head>
-    <body>
-        <div class="container">
-
-        <form action= "" method="POST">
-            <div class="form-group text-center">
-                <label for="sentenca" class="form-label"><h3><b>Analisador Ascendente SLR</b></h3></label><br><br>
-                <label for ="entrada"></label>
-                <textarea name="entrada" id="entrada"><?=$entrada?></textarea><br><br>
-                <button class="btn btn-primary" type="submit">Gerar código Assembly</button><br><br>
-            </div>  
 
 <?php
-
 require_once('../analisadorLexico./AnalisadorLexicoClasse.php');
 require_once('../analisadorDescendente./Pilha.php');
 require_once('../analisadorSemantico/AnalisadorSemantico.php');
@@ -49,9 +8,13 @@ require_once('../objetos./ChamaFuncao.php');
 require_once('../analisadorSemantico./ArvoreDerivacao.php');
 require_once('../geracaoDeCodigo./GeradorDeCodigo.php');
 
+$entrada = isset($_POST['entrada']) ? $_POST['entrada'] : "";
+//Definir tamanho do text area
+//Tamanho da fonte
+
 class AnalisadorAscendenteSLR{
 
-    // Dúvida  nas ações
+    //Dúvida  nas ações
     public $ACTION = array();
     public $GOTO = array();
     public $cont = 0;
@@ -59,6 +22,7 @@ class AnalisadorAscendenteSLR{
     public $elementCompara;
     public $programa;
     public $codigoEmAssembly = "";
+    public $aceita = false;
 
     function __construct(Lexico $lexico,$entrada){
         $this->lexico = $lexico;
@@ -321,50 +285,25 @@ class AnalisadorAscendenteSLR{
                     }
                     
                 }else if(array_key_exists($tokenAtualbject->token,$this->ACTION[$p->top()]) && $this->ACTION[$p->top()][$tokenAtualbject->token] == 'ACCEPT' && $semantico->verificaVarMesmoNome($escopo->listVariaveisDeclaradas,$contVarDeclaradas,$contVarDeclaradasReconhecidas) == false && $semantico->verificaValoresAtribuicao($escopo->listVariaveisDeclaradas,$escopo->listVariaveisUsadas,$escopo->listVarValoresRecebidos,$this->elementCompara, $myToken) == true && $semantico->verificaDeclaracoesOuNao($escopo->listVariaveisDeclaradas,$escopo->listVariaveisUsadas,$chamaFun->listVarChamaFuncao) == true){//ACC?
-                    print('<br><br><b>Linguagem aceita!</b>');
-                    $geradorCodigo = new GeradorCodigo();
-                    echo "<br><br>";
-                    echo "<h3>CÓDIGO EM ASSEMBLY:</h3>";
-                    $this->codigoEmAssembly = $geradorCodigo->geraCodigoAssembly($this->programa);
-                    echo $this->codigoEmAssembly;
-                    return true;
-                    break;
+                    $this->aceita = true;
+                    return $this->aceita;
                 }else{
-                    print("<br><br><b>Erro!</b>");
-                    return false;
-                    break;
+                    $this->aceita = false;
+                    return $this->aceita;
                }
             }catch(Exception $e){
-                print('<br><br><b>Linguagem aceita!</b>');
-                $geradorCodigo = new GeradorCodigo();
-                echo "<h3>CÓDIGO EM ASSEMBLY:</h3>";
-                $this->codigoEmAssembly = $geradorCodigo->geraCodigoAssembly($this->programa);
-                echo $this->codigoEmAssembly;
-                return true;
-                break;
+                $this->aceita = true;
+                return $this->aceita;
             }
 
 
         }//for
        
        
+       
     }//funcao
 
 }//CLASS
 
-$lexico = new Lexico($entrada.'#');
-if(isset($_POST['entrada']))    
-    $SLR  = new AnalisadorAscendenteSLR($lexico,$entrada);
-
-    echo "<br><br><br>";
-    if(!empty($SLR->programa)){
-       // print_r($SLR->programa);
-    }
-
 ?>
- </div>
 
-</body>
-        </fieldset>
-    </form>
-</html>
