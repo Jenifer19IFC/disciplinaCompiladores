@@ -115,36 +115,6 @@ $entrada = isset($_POST['entrada']) ? $_POST['entrada'] : "";
         </div>
         </form>
 
-        <br>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#JanelaModal">
-            Gerar código
-        </button>
-
-        <div id="JanelaModal" class="modal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    
-                        <div class="modal-header">
-                            <h3 class="modal-title">Código Assembly</h3>
-                            <button type="button" class="btn btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-
-                        <div class="modal-body">
-                            <p>Olá</p>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
-                        </div>
-                </div>
-
-            </div>
-
-        </div>
-
-
-
-
     </body>
         
 </html>
