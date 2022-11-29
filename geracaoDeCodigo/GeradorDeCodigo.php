@@ -37,8 +37,8 @@ class GeradorCodigo{
 
         //Quando valores de Atr são todos inteiros 
         if($programa->listaBlocos[0]->variavelEsq instanceof Constt && $programa->listaBlocos[0]->variavelDir instanceof Constt){
-            $assembly =  "<i>lw \$t1, ".$programa->listaBlocos[0]->variavelEsq->const."
-                lw \$t2, ".$programa->listaBlocos[0]->variavelDir->const."
+            $assembly =  "<i>li \$t1, ".$programa->listaBlocos[0]->variavelEsq->const."
+                li \$t2, ".$programa->listaBlocos[0]->variavelDir->const."
                 ".$operacao." \$t0,\$t1,\$t2</i>";
             return nl2br($assembly);
         }
@@ -46,16 +46,16 @@ class GeradorCodigo{
         if($programa->listaBlocos[0]->variavelEsq instanceof Id && $programa->listaBlocos[0]->variavelDir instanceof Constt){
             $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->variavelEsq->id.": .word 10\n
             .text\n\n lw \$t1, ".$programa->listaBlocos[0]->variavelEsq->id."
-            lw \$t2, ".$programa->listaBlocos[0]->variavelDir->const."
+            li \$t2, ".$programa->listaBlocos[0]->variavelDir->const."
             ".$operacao." \$t0,\$t1,\$t2</i>";
             return nl2br($assembly);
         }
         //Quando variávelDir é variável
         if($programa->listaBlocos[0]->variavelEsq instanceof Constt && $programa->listaBlocos[0]->variavelDir instanceof Id){
-            $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->variavelDir->id.": .word 10\n
-            .text\n\n lw \$t1, ".$programa->listaBlocos[0]->variavelEsq->const."
-            lw \$t2, ".$programa->listaBlocos[0]->variavelDir->id."
-            ".$operacao." \$t0,\$t1,\$t2</i>";
+            $assembly =  "<i>.data\n\n ". $programa->listaBlocos[0]->variavelDir->id.": .word 10\n
+            .text\n\n li \$t1, ".$programa->listaBlocos[0]->variavelEsq->const."
+             lw \$t2, ".$programa->listaBlocos[0]->variavelDir->id."
+             ".$operacao." \$t0,\$t1,\$t2</i>";
             return nl2br($assembly);
         }
         //Quando são todas variáveis
@@ -113,9 +113,9 @@ class GeradorCodigo{
         if($programa->listaBlocos[0]->expressao->operadorEsquerda instanceof Id && $programa->listaBlocos[0]->expressao->operadorDireita instanceof Constt && $tipoExpessaoIf != "string"){
             $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.": .word 10\n
             .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
-            lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
+            li \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
             beq \$t1,\$t2, label\n
-            label:</i>";
+            label:</i>";    
         }
        
         //Quando a==b, por exemplo
@@ -176,9 +176,9 @@ class GeradorCodigo{
         }
         //Quando é uma constante
         else if($programa->listaBlocos[0]->varr instanceof Constt){
-            $assembly = "<i>.data\n\n variavelAux: .word ".$programa->listaBlocos[0]->varr->const."\n\n .text\n
+            $assembly = "<i>.text\n
             li \$v0, 1
-            lw \$a0, variavelAux \n\n syscall";
+            li \$a0,".$programa->listaBlocos[0]->varr->const." \n\n syscall";
         }
         return nl2br($assembly);
     }
@@ -219,7 +219,7 @@ class GeradorCodigo{
             else if($programa->listaBlocos[0]->bloco->varr instanceof Constt){
                 $label = "<i>\n
                 li \$v0, 1
-                lw \$a0, ".$programa->listaBlocos[0]->bloco->varr->const."
+                li   \$a0, ".$programa->listaBlocos[0]->bloco->varr->const."
                 syscall</i>";
             }
         }
@@ -262,7 +262,7 @@ class GeradorCodigo{
                     $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.": .word 10
                     ".$programa->listaBlocos[0]->bloco->variavelEsq->id.": .asciiz \"linha de código\"\n
                     .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
-                    lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
+                    li \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
                     beq \$t1,\$t2, label </i>";
                     $label =  "<i>\n\nlabel:\n
                     lw \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->id."</i>";
@@ -275,10 +275,20 @@ class GeradorCodigo{
                     if($programa->listaBlocos[0]->bloco->variavelEsq instanceof Constt && $programa->listaBlocos[0]->expressao->operadorEsquerda instanceof Id && $programa->listaBlocos[0]->expressao->operadorDireita->const && $programa->listaBlocos[0]->expressao->operadorEsquerda == $programa->listaBlocos[0]->bloco->variavelQueRecebe ){
                         $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.": .word 10\n
                         .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
-                        lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
+                        li \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
                         beq \$t1,\$t2, label </i>";
                         $label =  "<i>\n\nlabel:\n
-                        lw \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->const."</i>";
+                        li \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->const."</i>";
+                        return $assembly.$label; 
+                    }
+                    //Mudei aqui
+                    else if($programa->listaBlocos[0]->bloco->variavelEsq instanceof Id && $programa->listaBlocos[0]->expressao->operadorEsquerda instanceof Id && $programa->listaBlocos[0]->expressao->operadorDireita->const && $programa->listaBlocos[0]->expressao->operadorEsquerda == $programa->listaBlocos[0]->bloco->variavelQueRecebe ){
+                        $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.": .word 10\n
+                        .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
+                        lw \$t2, ".$programa->listaBlocos[0]->bloco->variavelEsq->id."
+                        beq \$t1,\$t2, label </i>";
+                        $label =  "<i>\n\nlabel:\n
+                        li \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->id."</i>";
                         return $assembly.$label; 
                     }
                      //if(a==32){b=324}
@@ -288,7 +298,7 @@ class GeradorCodigo{
                             $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.": .word 10
                             ".$programa->listaBlocos[0]->bloco->variavelQueRecebe->id.": .word 11\n
                             .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
-                            lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
+                            li \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
                             beq \$t1,\$t2, label </i>";
                             $label =  "<i>\n\nlabel:\n
                             lw \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->id."</i>";
@@ -300,10 +310,10 @@ class GeradorCodigo{
                             $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.": .word 10
                             ".$programa->listaBlocos[0]->bloco->variavelQueRecebe->id.": .word 11\n
                             .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
-                            lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
+                            li \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
                             beq \$t1,\$t2, label </i>";
                             $label =  "<i>\n\nlabel:\n
-                            lw \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->const."</i>";
+                            li \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->const."</i>";
                             return $assembly.$label; 
                         } 
                      }
@@ -312,7 +322,7 @@ class GeradorCodigo{
                         $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.": .word 10
                         ".$programa->listaBlocos[0]->bloco->variavelEsq->id.": .word 11\n
                         .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
-                        lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
+                        li \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
                         beq \$t1,\$t2, label </i>
                        label:\n
                         lw \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->id."</i>";
@@ -327,7 +337,7 @@ class GeradorCodigo{
                         lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->id."
                         beq \$t1,\$t2, label 
                         label:\n
-                        lw \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->const."</i>";
+                        li \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->const."</i>";
                         return $assembly.$label; 
                     } 
                     else if($programa->listaBlocos[0]->expressao->operadorEsquerda->id == $programa->listaBlocos[0]->expressao->operadorDireita->id && $programa->listaBlocos[0]->bloco->variavelQueRecebe->id == $programa->listaBlocos[0]->expressao->operadorDireita->id ){
@@ -336,10 +346,21 @@ class GeradorCodigo{
                         lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->id."
                         beq \$t1,\$t2, label \n
                         label:\n
-                        lw \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->const."</i>";
+                        li \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->const."</i>";
                         return $assembly.$label; 
                     }
                     
+                }
+                if($programa->listaBlocos[0]->bloco->variavelEsq instanceof Id && $programa->listaBlocos[0]->bloco->variavelQueRecebe instanceof Id & $programa->listaBlocos[0]->expressao->operadorDireita instanceof Constt && $programa->listaBlocos[0]->expressao->operadorEsquerda instanceof Id){
+                    if($programa->listaBlocos[0]->bloco->variavelEsq->id == $programa->listaBlocos[0]->bloco->variavelQueRecebe->id && $programa->listaBlocos[0]->expressao->operadorEsquerda->id == $programa->listaBlocos[0]->expressao->operadorDireita->const && $programa->listaBlocos[0]->expressao->operadorEsquerda->id != $programa->listaBlocos[0]->bloco->variavelEsq->id){
+                        $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.": .word 10\n
+                        .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
+                        li \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->const."
+                        beq \$t1,\$t2, label \n
+                        label:\n
+                        lw \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->id."</i>";
+                        return $assembly.$label; 
+                    }
                 }
                 if($programa->listaBlocos[0]->bloco->variavelEsq instanceof Id){
                     if($programa->listaBlocos[0]->bloco->variavelEsq->id == $programa->listaBlocos[0]->bloco->variavelQueRecebe->id && $programa->listaBlocos[0]->expressao->operadorEsquerda->id == $programa->listaBlocos[0]->expressao->operadorDireita->id && $programa->listaBlocos[0]->expressao->operadorEsquerda->id != $programa->listaBlocos[0]->bloco->variavelEsq->id){
@@ -351,7 +372,7 @@ class GeradorCodigo{
                         label:\n
                         lw \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->id."</i>";
                         return $assembly.$label; 
-                }
+                    }
                 }
                 if($programa->listaBlocos[0]->bloco->variavelEsq instanceof Id){
                     if($programa->listaBlocos[0]->bloco->variavelEsq->id == $programa->listaBlocos[0]->bloco->variavelQueRecebe->id && $programa->listaBlocos[0]->expressao->operadorEsquerda->id == $programa->listaBlocos[0]->expressao->operadorDireita->id && $programa->listaBlocos[0]->expressao->operadorEsquerda->id == $programa->listaBlocos[0]->bloco->variavelEsq->id){
@@ -365,14 +386,14 @@ class GeradorCodigo{
                     }
                 }
                 
-                if($programa->listaBlocos[0]->expressao->operadorEsquerda->id != $programa->listaBlocos[0]->expressao->operadorDireita->id && $programa->listaBlocos[0]->bloco->variavelEsq instanceof Constt){
+                else if($programa->listaBlocos[0]->expressao->operadorEsquerda->id != $programa->listaBlocos[0]->expressao->operadorDireita->id && $programa->listaBlocos[0]->bloco->variavelEsq instanceof Constt){
                     $assembly =  "<i>.data\n\n". $programa->listaBlocos[0]->expressao->operadorEsquerda->id.": .word 10
                     ".$programa->listaBlocos[0]->expressao->operadorDireita->id.": .word 1\n
                     .text\n\n lw \$t1, ".$programa->listaBlocos[0]->expressao->operadorEsquerda->id."
                     lw \$t2, ".$programa->listaBlocos[0]->expressao->operadorDireita->id."
                     beq \$t1,\$t2, label \n
                     label:\n
-                    lw \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->const."</i>";
+                    li \$a0, ".$programa->listaBlocos[0]->bloco->variavelEsq->const."</i>";
                     return $assembly.$label; 
                 }
                 else if($programa->listaBlocos[0]->expressao->operadorEsquerda->id != $programa->listaBlocos[0]->expressao->operadorDireita->id && $programa->listaBlocos[0]->bloco->variavelEsq instanceof Id){

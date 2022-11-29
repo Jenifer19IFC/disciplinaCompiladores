@@ -1,6 +1,38 @@
  
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <h1><title>Lexico</title></h1>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+        .container { 
+        width: 500px; 
+        margin-left: auto;
+        margin-right: auto; 
+        width: 68rem;
+        align-self: center;
+        text-align: center;
 
+    }
+    .vertical {
+            border-left: 6px solid black;
+            height: 600px;
+            position:absolute;
+            left: 50%;
+    }
+    body{
+        color: #000000;
+        font-family: 'Microsoft Sans Serif';font-size: 20px;
+        background-color: light;
+        text-align: center;
+
+    } 
+</style>
+  
  <?php
 
             require_once('Token.php');
@@ -161,5 +193,11 @@
         $lex->next_token();
         //$lex->mostraListaTokens();
                 
-        ?>
+    ?>
 
+</div>
+        </form>
+
+    </body>
+        
+</html>
