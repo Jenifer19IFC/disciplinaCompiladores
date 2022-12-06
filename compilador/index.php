@@ -1,5 +1,4 @@
 <?php
-require_once('../analisadorLexico./AnalisadorLexicoClasse.php');
 require_once('../analisadorAscendente./AnalisadorAscendenteSLR.php');
 require_once('../geracaoDeCodigo./GeradorDeCodigo.php');
 $entrada = isset($_POST['entrada']) ? $_POST['entrada'] : "";
